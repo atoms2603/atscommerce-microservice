@@ -1,0 +1,93 @@
+﻿{
+  "Routes": [
+    //Customer API
+    {
+      // DownstreamPathTemplate, Downstreamscheme và DownstreamHostAndports xác định URL mà request sẽ được chuyển đến
+      "DownstreamPathTemplate": "/api/Customer",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 20057
+        }
+      ],
+      // UpstreamPathTemplate là URL mà Ocelot sẽ sử dụng để xác định DownstreamPathTemplate sẽ sử dụng cho một request.
+      "UpstreamPathTemplate": "/Customer",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
+      // Ví dụ: theo config ở trên, khi client vào url /posts/{postId} sẽ được map đến service tại localhost:80/api/post/{postId}
+    },
+
+    //Product API
+    {
+      "DownstreamPathTemplate": "/product-api/{controller}/{action}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5271
+        },
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+
+      // LoadBalancer config
+      // Tự động cân bằng, điều hướng các request để tối ưu hệ thống
+      /* 
+        RoundRobin: luân phiên
+        LeastConnection: chuyển request đến server có ít kết nối nhất
+        NoLoadBalancer: lấy service đầu tiên khả dụng
+        CookieStickySessions: sử dụng cookie để gắn tất cả các request vào một server cụ thể.
+      */
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+
+      "UpstreamPathTemplate": "/product-gateway/{controller}/{action}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      // Giới hạn số lượng request
+      "RateLimitOptions": {
+        // Client có ip trong mảng này sẽ không bị ảnh hưởng bởi rate limiting.
+        "ClientWhitelist": [],
+
+        // Bật tính năng rate limiting
+        "EnableRateLimiting": true,
+
+        // Chỉ định khoảng thời gian mà rate limitting áp dụng. 
+        //Nếu bạn thực hiện nhiều yêu cầu hơn trong khoảng thời gian hơn giới hạn cho phép thì bạn cần phải đợi thời gian trôi qua trước khi bạn đưa ra yêu cầu khác.
+        "Period": "5s",
+
+        // Sau số giây này chúng ta có thể gửi lại request
+        "PeriodTimespan": 1,
+
+        // Xác định số lượng yêu cầu tối đa mà client có thể thực hiện trong một khoảng thời gian xác định.
+        "Limit": 1
+
+        /*
+        DisableRateLimitHeaders - chỉ định xem các X-Rate-Limit và Retry-After headers có bị vô hiệu hóa hay không.
+        QuotaExceededMessage - mô tả lỗi khi xảy ra rate limit
+        HttpStatusCode - mô tả mã code khi xảy ra rate limit
+        ClientIdHeader - xác định tiêu đề được sử dụng để xác định khách hàng. Theo mặc định, nó là "clientid"
+        */
+      }
+
+      // Caching với ocelot cần install packae Ocelot.Cache.CacheManager
+      //"FileCacheOptions": {
+      //  "TtlSeconds": 30,
+      //  "Region": "customercaching"
+      //},
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "RequestIdKey": "x-correlation-id",
+    "UseServiceDiscovery": true,
+    "DownstreamScheme": "http"
+  }
+}
