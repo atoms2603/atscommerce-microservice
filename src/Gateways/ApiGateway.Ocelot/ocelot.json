@@ -21,7 +21,7 @@
 
     //Product API
     {
-      "DownstreamPathTemplate": "/product-api/{controller}/{action}",
+      "DownstreamPathTemplate": "/product-api/{controller}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -46,7 +46,7 @@
         "Type": "LeastConnection"
       },
 
-      "UpstreamPathTemplate": "/product-gateway/{controller}/{action}",
+      "UpstreamPathTemplate": "/product-gateway/{controller}",
       "UpstreamHttpMethod": [
         "GET"
       ],

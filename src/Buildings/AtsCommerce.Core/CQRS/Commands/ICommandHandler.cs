@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace AtsCommerce.Core.CQRS;
+namespace AtsCommerce.Core.CQRS.Commands;
 
 public interface ICommandHandler<in TCommand>
     : ICommandHandler<TCommand, Unit>

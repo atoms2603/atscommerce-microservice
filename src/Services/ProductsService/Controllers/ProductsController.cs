@@ -1,19 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AtsCommerce.Core.CQRS.Commands;
+using AtsCommerce.Core.CQRS.Queries;
+using Microsoft.AspNetCore.Mvc;
+using ProductsService.Dtos;
+using System.Threading;
 
 namespace ProductsService.Controllers
 {
-    [Route("~/product-api/[controller]/[action]")]
+    [Route("~/product-api/[controller]")]
     [ApiController]
     public class ProductsController : Controller
     {
-        public ProductsController()
+        private readonly IQueryBus _queryBus;
+        public ProductsController(IQueryBus queryBus)
         {
+            _queryBus = queryBus;
         }
 
         [HttpGet]
-        public string Products()
+        public async Task<ProductsResult> Products([FromQuery] ProductsQuery queryRequest)
         {
-            return "This is product controller";
+            var result = await _queryBus.Send(queryRequest);
+
+            return result;
         }
     }
 }

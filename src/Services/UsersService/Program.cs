@@ -1,6 +1,3 @@
-using AtsCommerce.Core.CQRS.Queries;
-using System.Reflection;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,14 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-//builder.Services.AddScoped<ICommandBus, CommandBus>();
-builder.Services.AddScoped<IQueryBus, QueryBus>();
-//builder.Services.AddScoped<IEventBus, EventBus>();
-
 var app = builder.Build();
 
-app.UseRouting();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
