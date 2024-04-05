@@ -8,20 +8,20 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 20057
+          "Port": 80
         }
       ],
       // UpstreamPathTemplate là URL mà Ocelot sẽ sử dụng để xác định DownstreamPathTemplate sẽ sử dụng cho một request.
-      "UpstreamPathTemplate": "/Customer",
+      "UpstreamPathTemplate": "api/Customer",
       "UpstreamHttpMethod": [
         "GET"
       ]
-      // Ví dụ: theo config ở trên, khi client vào url /posts/{postId} sẽ được map đến service tại localhost:80/api/post/{postId}
+      // Ví dụ: theo config ở trên, khi client vào url /api/Customer sẽ được map đến service tại localhost:80/api/Customer
     },
 
     //Product API
     {
-      "DownstreamPathTemplate": "/product-api/{controller}",
+      "DownstreamPathTemplate": "/api/products",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -46,9 +46,9 @@
         "Type": "LeastConnection"
       },
 
-      "UpstreamPathTemplate": "/product-gateway/{controller}",
+      "UpstreamPathTemplate": "/api/products",
       "UpstreamHttpMethod": [
-        "GET"
+        "GET","POST","PUT"
       ],
 
       // Giới hạn số lượng request
@@ -61,7 +61,7 @@
 
         // Chỉ định khoảng thời gian mà rate limitting áp dụng. 
         //Nếu bạn thực hiện nhiều yêu cầu hơn trong khoảng thời gian hơn giới hạn cho phép thì bạn cần phải đợi thời gian trôi qua trước khi bạn đưa ra yêu cầu khác.
-        "Period": "5s",
+        "Period": "1s",
 
         // Sau số giây này chúng ta có thể gửi lại request
         "PeriodTimespan": 1,
@@ -82,12 +82,37 @@
       //  "TtlSeconds": 30,
       //  "Region": "customercaching"
       //},
+    },
+    {
+      "DownstreamPathTemplate": "/api/products/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5271
+        },
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "UpstreamPathTemplate": "/api/products/{id}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "UPDATE",
+        "DELETE",
+        "PATCH"
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 1
+      }
     }
-  ],
-
-  "GlobalConfiguration": {
-    "RequestIdKey": "x-correlation-id",
-    "UseServiceDiscovery": true,
-    "DownstreamScheme": "http"
-  }
+  ]
 }

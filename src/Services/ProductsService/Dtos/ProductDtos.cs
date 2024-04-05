@@ -2,11 +2,7 @@
 
 namespace ProductsService.Dtos
 {
-    public class ProductsQuery : IQuery<ProductsResult>
-    {
-    }
-
-    public class ProductsResult
+    public class CreateOrUpdateProductDto
     {
         public string? Name { get; set; }
     }

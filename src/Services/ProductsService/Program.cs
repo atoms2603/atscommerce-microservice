@@ -1,4 +1,5 @@
 using AtsCommerce.Core.CQRS.Queries;
+using Infrastructure.Core.Commands;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-//builder.Services.AddScoped<ICommandBus, CommandBus>();
+builder.Services.AddScoped<ICommandBus, CommandBus>();
 builder.Services.AddScoped<IQueryBus, QueryBus>();
 //builder.Services.AddScoped<IEventBus, EventBus>();
 
